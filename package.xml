@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>semantic_mapping</name>
+  <name>osu_semantic_mapping</name>
   <version>0.0.0</version>
   <description>Project files for semantic mapping</description>
 
