@@ -42,14 +42,18 @@ class LidarData:
         pcl_data = pcl.PointCloud()
         pcl_data.from_list(points_list)
 
+        x_range = [np.min(x), np.max(x)]
+        y_range = [np.min(y), np.max(y)]
+        z_range = [np.min(z), np.max(z)]
+
         if self.it == 0:
             self.p = pcl_data
-            main(self.p, x, y, z)
+            main(self.p, x_range, y_range, z_range)
 
         self.it += 1
 
 
-def main(cloud, x, y, z):
+def main(cloud, x_range, y_range, z_range):
     print('Point cloud data: ' + str(cloud.size) + ' points')
     # for i in range(0, cloud.size):
     #     print('x: ' + str(cloud[i][0]) + ', y : ' +
@@ -76,14 +80,18 @@ def main(cloud, x, y, z):
     #     print(str(indices[i]) + ', x: ' + str(cloud[indices[i]][0]) + ', y : ' +
     #           str(cloud[indices[i]][1]) + ', z : ' + str(cloud[indices[i]][2]))
 
-    plot_plane(coefficients, x, y, z)
+    plot_plane(coefficients, x_range, y_range, z_range)
 
 
-def plot_plane(coefficients, x_points, y_points, z_points):
+def plot_plane(coefficients, x_range, y_range, z_range):
     # PLANE -------------------------------
-    x_plane = np.linspace(0, 8)
-    y_plane = np.linspace(0, 8)
 
+    # THIS IS A STRONG ASSUMPTION - assuming that the x and y coordinates are uniformly distributed
+    # and that every x overlaps with every y (i.e. that it's a square).
+    x_plane = np.arange(x_range[0], x_range[1], 0.01)
+    y_plane = np.arange(y_range[0], y_range[1], 0.01)
+
+    X, Y = np.meshgrid(x_plane, y_plane)
     # print(x_plane)
     #
     # x_plot, y_plot = np.meshgrid(x_plane, y_plane)
@@ -93,17 +101,19 @@ def plot_plane(coefficients, x_points, y_points, z_points):
     c = coefficients[2]
     d = coefficients[3]
 
-    z_plot = (a * x_plane + b * y_plane + d) / c
+    z_plot = (a * X + b * Y + d) / c
+    # print(z_plot)
 
     fig = plt.figure()
-    ax = fig.gca(projection='3d')
-    surf = ax.plot_surface(x_plane, y_plane, z_plot, color='b')
+    ax = fig.add_subplot(1, 2, 1, projection='3d')
+    # ax = fig.gca(projection='3d')
+    surf = ax.plot_surface(X, Y, z_plot, color='b')
 
     # POINTS ---------------------------------
-    ax2 = fig.add_subplot(111, projection='3d')
+    ax2 = fig.add_subplot(1, 2, 2, projection='3d')
 
     # Plot the values
-    ax2.scatter(x_points, y_points, z_points, c='r', marker='o')
+    ax2.scatter(X, Y, z_plot, c='r', marker='o')
     ax2.set_xlabel('X-axis')
     ax2.set_ylabel('Y-axis')
     ax2.set_zlabel('Z-axis')
