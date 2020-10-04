@@ -29,7 +29,7 @@ connected_halls = [('h00', 'h01'), ('h00', 'h02'), ('h00', 'h03'),
                    ('h05', 'h08'), ('h06', 'h08'), ('h07', 'h08')]
 
 hospital = HospitalGraph(num_rooms, num_halls, extra_doors, hall_door_links, extra_door_hall_links, connected_halls)
-# hospital.plot_graph()
+# hospital_v1.plot_graph()
 
 for (n1, n2) in hospital.G.edges():
     edge_weight = int(n1[1:3]) + int(n2[1:3])
@@ -37,7 +37,7 @@ for (n1, n2) in hospital.G.edges():
     hospital.G[n1][n2]['lower'] = 1 / (edge_weight + 1)
 
 
-# hospital.plot_graph()
+# hospital_v1.plot_graph()
 
 print(nx.dijkstra_path(hospital.G, 'r03', 'r05'))
 print(nx.dijkstra_path(hospital.G, 'r03', 'r05', weight='lower'))
